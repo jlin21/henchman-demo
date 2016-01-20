@@ -1,0 +1,36 @@
+name: "Setup up basic hello message webserver"
+tasks:
+  - name: "Install epel"
+    rpm: url="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+    sudo: true
+    ignore_errors: true
+
+  - name: "Install {{ item }}"
+    yum: name="{{ item }}" state="present" repo="epel"
+    sudo: true
+    ignore_errors: true
+    with_items:
+      - "nodejs"
+      - "npm"
+      - "daemonize"
+
+  - name: "Create demoapp init script"
+    copy: src="demo/demoapp" dest="/etc/init.d/demoapp" mode=755
+    sudo: true
+
+  - name: "Create {{ item }} for demoapp"
+    shell: cmd="mkdir -p {{ item }} && chown -R vagrant {{ item }}"
+    sudo: true
+    with_items:
+      - "/var/run/demoapp"
+      - "/var/log/demoapp"
+
+  - name: "Move files"
+    template: src="demo/files" dest="demoapp"
+    
+  - name: "Get node modules"
+    shell: cmd="npm install" chdir="demoapp"
+
+  - name: "Start server"
+    shell: cmd="nohup /sbin/service demoapp restart \&; sleep 1"
+    sudo: true

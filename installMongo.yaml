@@ -1,0 +1,9 @@
+name: "Install Mongo"
+tasks:
+  - name: "Configure yum for Mongo"
+    shell: cmd="wget https://repo.mongodb.org/yum/redhat/mongodb-org.repo -P /etc/yum.repos.d/"
+    sudo: true
+
+  - name: "Install Mongo"
+    yum: name="mongodb-org" state="present"
+    sudo: true

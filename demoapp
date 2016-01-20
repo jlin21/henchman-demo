@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# chkconfig: 35 90 12
+# description: mom_sender-cache script
+#
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+DEMO_APP_DIR=/home/vagrant/demoapp
+DEMO_APP_LOG_DIR=/var/log/demoapp
+
+DAEMON=$DEMO_APP_DIR/server.js
+DESC=demoapp
+PID_DIR="/var/run/demoapp"
+PID_FILE="${PID_DIR}/${DESC}.pid"
+LOCK_FILE=${LOCKFILE:-/var/lock/subsys/${DESC}}
+RETVAL=0
+LOCKFILE=/var/lock/subsys/demoapp
+
+USER="vagrant"
+# Get function from functions library
+. /etc/init.d/functions
+
+start() {
+    echo -n $"Starting ${DESC}: "
+    daemonize -u $USER -p $PID_FILE -l $LOCK_FILE -a -o ${DEMO_APP_LOG_DIR}/${DESC}.log -e ${DEMO_APP_LOG_DIR}/${DESC}-error.log $DAEMON
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ${DESC}: "
+    killproc -p ${PID_FILE} -d 10 $DAEMON
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${LOCK_FILE} ${PID_FILE}
+    return $RETVAL
+}
+
+re_status () {
+  echo -e "${DESC} \c" && status -p ${PID_FILE} ${DAEMON}
+  RETVAL=$?
+  return $RETVAL
+}
+
+
+
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        re_status
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0

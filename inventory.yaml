@@ -1,0 +1,7 @@
+groups:
+  demo:
+    hosts:
+      - 192.168.33.10
+      - 192.168.33.11
+global_vars:
+  henchman_username: "vagrant"
