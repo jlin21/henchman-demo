@@ -3,11 +3,11 @@ hosts:
   - demo
 debug: true
 vars:
-  message: "mama we made it!!"
+  message: "papa we made it!!"
 tasks:
   - name: "Install Mongo"
-    include: "demo/installMongo.yaml" 
+    include: "installMongo.yaml" 
     when: 'vars.current_hostname == "192.168.33.11"'
   - name: "Setup hello message"
-    include: "demo/helloMessage.yaml"
+    include: "helloMessage.yaml"
     when: 'vars.current_hostname == "192.168.33.10"'

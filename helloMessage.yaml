@@ -15,7 +15,7 @@ tasks:
       - "daemonize"
 
   - name: "Create demoapp init script"
-    copy: src="demo/demoapp" dest="/etc/init.d/demoapp" mode=755
+    copy: src="demoapp" dest="/etc/init.d/demoapp" mode=755
     sudo: true
 
   - name: "Create {{ item }} for demoapp"
@@ -26,7 +26,7 @@ tasks:
       - "/var/log/demoapp"
 
   - name: "Move files"
-    template: src="demo/files" dest="demoapp"
+    template: src="files" dest="demoapp"
     
   - name: "Get node modules"
     shell: cmd="npm install" chdir="demoapp"
